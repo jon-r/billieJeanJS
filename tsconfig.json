@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "pretty": "true",
+    "removeComments": true,
+    "sourceMap": true
+  }
+}
