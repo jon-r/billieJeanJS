@@ -9,13 +9,23 @@
 </head>
 <style>
 
+  * {
+    box-sizing: border-box;
+  }
+
   .demo-box {
     position: absolute;
-    border:solid 1px red;
+    background: #303F9F;
     height: 600px;
     width:1000px;
     top: calc(50% - 300px);
     left:calc(50% - 500px);
+/*    border: solid 1px #3F51B5;*/
+  }
+
+  .tile {
+    border: solid 1px #3F51B5;
+    cursor: pointer;
   }
 
 </style>
@@ -25,7 +35,7 @@
   <div id="billieJS" class="demo-box"></div>
 
 
-  <script type="text/javascript" src="script.js"></script>
+  <script type="text/javascript" src="danceTiles.js"></script>
 
 </body>
 </html>

@@ -1,21 +1,10 @@
-var parentEl;
-parentEl = document.getElementById('billieJS');
-//interface DanceMat {
-//  height: number;
-//  width: number;
-//  gridSize: number;
-//  color: number;
-//}
-//
-//function build(mat : DanceMat) {
-//
-//}
+var parentEl = document.getElementById('billieJS');
 var DanceMat = (function () {
-    //private cssArr: Array<string>;
     function DanceMat(height, width, gridSize) {
         this.height = height;
         this.width = width;
         this.gridSize = gridSize;
+        this.tiles = [];
         this.squaresX = Math.floor(width / gridSize);
         this.squaresY = Math.floor(height / gridSize);
         this.sqCount = this.squaresX * this.squaresY;
@@ -38,9 +27,6 @@ var DanceMat = (function () {
         ];
         return cssArr.join('; ');
     };
-    /*private setAbsStyle () {
-
-    }*/
     DanceMat.prototype.init = function (parent) {
         var el, i, j;
         el = document.createElement('div');
@@ -51,7 +37,9 @@ var DanceMat = (function () {
                 var newEl = el.cloneNode();
                 newEl.dataset.x = j;
                 newEl.dataset.y = i;
+                newEl.className = 'tile';
                 parent.appendChild(newEl);
+                this.tiles.push(newEl);
             }
         }
     };
