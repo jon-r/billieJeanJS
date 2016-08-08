@@ -28,6 +28,15 @@
     cursor: pointer;
   }
 
+  .ping {
+    animation: 500ms flash;
+  }
+
+  @keyframes flash {
+    0% { background-color: #FF5722}
+    100% { background-color: transparent}
+  }
+
 </style>
 
 <body>
@@ -36,6 +45,10 @@
 
 
   <script type="text/javascript" src="danceTiles.js"></script>
+  <script type="text/javascript" >
+    danceMat.init();
+  </script>
+
 
 </body>
 </html>
