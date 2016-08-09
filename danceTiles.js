@@ -67,19 +67,51 @@ var Tile = function Tile(el, x, y) {
 var blink = {
 
   go : function(direction,x,y) {
-    var el = danceMat.parentEl.getElementsByClassName('tile x' + x + ' y' + y);
-    if (el.length == 1) {
-      el[0].classList.add('ping');
+    var el = danceMat.parentEl.getElementsByClassName('tile x' + x + ' y' + y), classes;
+    if (el.length == 1 ) {
 
-      if(direction) {
+      classes = el[0].classList;
+
+      if (!classes.contains('fix')) {
+
+
+        var blinkers = delay(function() {
+          classes.add('ping');
+
+
+        }, 0)
+        .delay(function() {
+
+          if(direction) {
+            blink[direction](x,y);
+          }
+        }, 50)
+        .delay(function() {
+
+         classes.add(direction);
+        }, 50)
+        .delay(function() {
+          classes.remove('ping');
+          classes.remove('fix');
+          classes.remove(direction);
+        }, 300);
+      } else {
+
+
         setTimeout(function() {
-          blink[direction](x,y);
+          classes.add('fix');
+
+          if (classes.contains('up') || classes.contains('down') ) {
+
+
+            blink.left(x-1,y);
+            blink.right(x+1,y);
+          } else if  (classes.contains('left') || classes.contains('right') ) {
+            blink.up(x,y-1);
+            blink.down(x,y=1);
+          }
         }, 50);
       }
-
-      setTimeout(function() {
-        el[0].classList.remove('ping');
-      }, 500);
     }
   },
   up : function(x,y) {
@@ -101,7 +133,8 @@ var blink = {
 
   all : function(x,y) {
 
-    blink.go(false,x,y);
+    blink.go(false, x,y);
+
     setTimeout(function() {
        blink.up(x,y);
        blink.down(x,y);
@@ -113,40 +146,41 @@ var blink = {
 }
 
 
+//http://stackoverflow.com/a/6921279
+function delay(fn, t) {
+  // private instance variables
+  var queue = [],
+    self, timer;
 
-
-
-//function danceMat(options) {
-//  options = options || {};
-//
-//
-//
-//
-//  var out = {
-//    config:
-//
-//  }
-//}
-//
-//
-//(function () {
-//  "use strict";
-//
-//  var danceFloor = {
-//    init: function(options) {
-//
-//      options = options || {};
-//      var config = {
-//        tableElement : options.hasOwnProperty('tableElement') ? options.tableElement : '#billieJS',
-//        deckCount : options.hasOwnProperty('deckCount') ? options.deckCount : 6,
-//        players : options.hasOwnProperty('players') ? options.players : ['player']
-//      }, control = {
-//        parent : document.createElement('div'),
-//      };
-//
-//      danceFloor.table = document.getElementById('billieJS');
-//    }
-//  };
-//
-//
-//})();
+  function schedule(fn, t) {
+    timer = setTimeout(function () {
+      timer = null;
+      fn();
+      if (queue.length) {
+        var item = queue.shift();
+        schedule(item.fn, item.t);
+      }
+    }, t);
+  }
+  self = {
+    delay: function (fn, t) {
+      // if already queuing things or running a timer,
+      //   then just add to the queue
+      if (queue.length || timer) {
+        queue.push({
+          fn: fn,
+          t: t
+        });
+      } else {
+        // no queue or timer yet, so schedule the timer
+        schedule(fn, t);
+      }
+      return self;
+    },
+    cancel: function () {
+      clearTimeout(timer);
+      queue = [];
+    }
+  };
+  return self.delay(fn, t);
+}
