@@ -1,0 +1,40 @@
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .demo-box {
+    position: absolute;
+    background: #303F9F;
+    height: 600px;
+    width:1000px;
+    top: calc(50% - 300px);
+    left:calc(50% - 500px);
+/*    border: solid 1px #3F51B5;*/
+  }
+
+  .tile {
+    border: solid 1px #3F51B5;
+    cursor: pointer;
+  }
+
+  .ping {
+    animation: 500ms flash;
+/*    background-color: #FF5722*/
+  }
+
+  .lock {
+    background-color: red;
+  }
+
+/*
+  .live {
+    -webkit-transition: all 500ms;
+    transition: all 500ms;
+  }
+*/
+
+  @keyframes flash {
+    0% { background-color: #FF5722}
+    100% { background-color: transparent}
+  }

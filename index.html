@@ -5,7 +5,8 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>Billie Jean Tiles</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-<!--  <link rel="stylesheet" href="lib/style.css">-->
+<!--  <link rel="stylesheet" href="/style-dance.css">-->
+
 </head>
 <style>
 
@@ -16,51 +17,25 @@
   .demo-box {
     position: absolute;
     background: #303F9F;
-    height: 600px;
+    height: 1000px;
     width:1000px;
-    top: calc(50% - 300px);
+    top: calc(50% - 500px);
     left:calc(50% - 500px);
-/*    border: solid 1px #3F51B5;*/
-  }
-
-  .tile {
     border: solid 1px #3F51B5;
-    cursor: pointer;
-  }
-
-  .ping {
-    animation: 500ms flash;
-/*    background-color: #FF5722*/
-  }
-
-  .lock {
-    background-color: red;
-  }
-
-/*
-  .live {
-    -webkit-transition: all 500ms;
-    transition: all 500ms;
-  }
-*/
-
-  @keyframes flash {
-    0% { background-color: #FF5722}
-    100% { background-color: transparent}
   }
 
 </style>
 
 <body>
 
+  <div class="demo-box" ></div>
+
+<!--
   <div id="billieJS" class="demo-box"></div>
-
-
   <script type="text/javascript" src="danceTiles.js"></script>
-  <script type="text/javascript" >
+-->
 
-    //danceMat.init();
-  </script>
+  <script src="dist/bundle.js"></script>
 
 
 </body>
