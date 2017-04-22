@@ -12,7 +12,7 @@ var danceMat = (function() {
     };
 
     this.buildGrid();
-    this.addParentListener();
+    this.parentEl.addEventListener("click", blink.set, false);
 
   };
   danceMat.prototype = {
@@ -38,9 +38,6 @@ var danceMat = (function() {
       }
     },
 
-    addParentListener: function() {
-      this.parentEl.addEventListener("click", blink.set, false);
-    },
 
     setParentCss: function () {
       var get = this.config,
@@ -54,6 +51,7 @@ var danceMat = (function() {
         ];
       return cssArr.join('; ');
     },
+    
     setTileCss: function () {
       var size = this.config.gridSize, cssArr = [
         'height:' + size + 'px',

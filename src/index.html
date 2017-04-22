@@ -10,24 +10,43 @@
 </head>
 <style>
 
-  * {
-    box-sizing: border-box;
+
+  .container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right:0;
   }
 
   .demo-box {
     position: absolute;
-    background: #303F9F;
-    height: 1000px;
-    width:1000px;
-    top: calc(50% - 500px);
-    left:calc(50% - 500px);
+    height: 100%;
+    width:100%;
+  }
+
+  [data-grid-pos="start"] {
+    fill: orange;
+  }
+
+  [data-grid-pos="join"] {
+    fill: red;
+  }
+
+  .glow {
+    opacity: 1;
   }
 
 </style>
 
 <body>
 
-  <svg class="demo-box" data-gridme ></svg>
+<div class="container" >
+  <svg class="demo-box"  viewbox="0 0 300 300" height="100%" width="100%" preserveAspectRatio="xMidYMid" data-gridme >
+    <rect height="100%" width="100%" fill="#303F9F" />
+  </svg>
+</div>
+
 
 
 <!--
