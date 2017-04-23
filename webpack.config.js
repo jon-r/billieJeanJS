@@ -8,7 +8,7 @@ const config = {
   output: {
     path: __dirname + '/dist', // `dist` is the destination
     filename: 'bundle.js',
-    publicPath: "/assets",
+    publicPath: "/dist",
   },
   module: {
     rules: [

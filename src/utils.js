@@ -23,5 +23,5 @@ export function randomFrom(arr) {
 }
 
 export function addArr(arr1, arr2) {
-  return arr1.map((n, i) => n + arr2[i]);
+  return arr1.map((n, i) => Number(n) + Number(arr2[i]));
 }

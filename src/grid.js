@@ -13,6 +13,19 @@ const presetRect = setAttrs(doc.createElementNS('http://www.w3.org/2000/svg', 'r
   class: 'grid-rect',
 });
 
+function pointIs(filter, el) {
+  const routes = JSON.parse(el.dataset.routes);
+  const routeCount = routes.length;
+
+  const out = {
+    direction: routes[0],
+    line: routeCount === 2,
+    start: routeCount === 1,
+  };
+
+  return out[filter];
+}
+
 function setGridRoutes(coords) {
   const x = coords[0];
   const y = coords[1];
@@ -28,7 +41,19 @@ function setGridRoutes(coords) {
   if (isHoriz && x > 0) out.push('l');
   if (isHoriz && x < gridCountX - 1) out.push('r');
 
+  // TODO: add 'specials' (eg linear, start to filter in advance);
+
   return JSON.stringify(out);
+}
+
+function setSpecial(rect) {
+  if (pointIs('line', rect)) {
+    return 'line';
+  }
+  if (pointIs('start', rect)) {
+    return 'start';
+  }
+  return false;
 }
 
 function getRect(arr) {
@@ -36,7 +61,7 @@ function getRect(arr) {
     x: arr[0] * opts.rectSize,
     y: arr[1] * opts.rectSize,
     'data-routes': setGridRoutes(arr),
-    'data-coords': JSON.stringify(arr),
+    'data-coords': arr.join(','),
   });
 }
 
@@ -52,6 +77,7 @@ export default function buildGrid() {
 
       if (coords.some(isFactorFilter, opts.gridLines)) {
         const rect = getRect(coords);
+        rect.dataset.special = setSpecial(rect);
         container.appendChild(rect);
         points.push(rect);
       }

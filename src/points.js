@@ -18,28 +18,24 @@ const directionFrom = {
   r: 'l',
 };
 
-function pointIs(filter, el) {
-  const routes = JSON.parse(el.dataset.routes);
-  const routeCount = routes.length;
-
-  const out = {
-    direction: routes[0],
-    start: routeCount === 1,
-  };
-
-  return out[filter];
-}
-
 function setDirection(el) {
   const currData = el.dataset;
   const currDirection = currData.direction ? currData.direction : false;
+  currData.direction = '';
+
+  const currSpecial = currData.special;
+  if (currSpecial === 'line') {
+    return currDirection;
+  }
+
   const currRoutes = JSON.parse(currData.routes);
+  if (currSpecial === 'start') {
+    return currRoutes[0];
+  }
+
+
   const possibleRoutes = currRoutes
   .filter(x => x !== directionFrom[currDirection]);
-
-  // console.log(possibleRoutes);
-
-  currData.direction = '';
 
   return randomFrom(possibleRoutes);
 }
@@ -51,9 +47,9 @@ function nextPoint(currEl) {
     return false;
   }
 
-  const currCoords = JSON.parse(currEl.dataset.coords);
+  const currCoords = currEl.dataset.coords.split(',');
   const offset = directionTo[newDirection];
-  const newCoords = JSON.stringify(addArr(currCoords, offset));
+  const newCoords = addArr(currCoords, offset).join(',');
   const newEl = pointsAll.find(point => point.dataset.coords === newCoords);
 
   newEl.dataset.direction = newDirection;
@@ -76,7 +72,7 @@ function activatePoint(el) {
 }
 
 export default function activatePoints() {
-  const pointsStarts = pointsAll.filter(point => pointIs('start', point));
+  const pointsStarts = pointsAll.filter(point => point.dataset.special === 'start');
   const pointsStartCount = pointsStarts.length;
 
   return setInterval(() => {
