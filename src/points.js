@@ -1,6 +1,7 @@
 import opts from './config';
 import { getRandom, randomFrom, addArr } from './utils';
 import buildGrid from './grid';
+import { cacheGet } from './cache';
 
 const pointsAll = Array.from(buildGrid());
 
@@ -50,7 +51,8 @@ function nextPoint(currEl) {
   const currCoords = currEl.dataset.coords.split(',');
   const offset = directionTo[newDirection];
   const newCoords = addArr(currCoords, offset).join(',');
-  const newEl = pointsAll.find(point => point.dataset.coords === newCoords);
+  // const newEl = pointsAll.find(point => point.dataset.coords === newCoords);
+  const newEl = cacheGet(newCoords);
 
   newEl.dataset.direction = newDirection;
 

@@ -1,4 +1,5 @@
 import { setAttrs, isFactor, isFactorFilter } from './utils';
+import { cacheAdd } from './cache';
 import opts from './config';
 
 const doc = document;
@@ -78,6 +79,7 @@ export default function buildGrid() {
       if (coords.some(isFactorFilter, opts.gridLines)) {
         const rect = getRect(coords);
         rect.dataset.special = setSpecial(rect);
+        cacheAdd(coords.join(','), rect);
         container.appendChild(rect);
         points.push(rect);
       }
