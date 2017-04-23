@@ -4,6 +4,7 @@ import buildGrid from './grid';
 import { cacheGet } from './cache';
 
 const pointsAll = Array.from(buildGrid());
+let pointsActive = 0;
 
 const directionTo = {
   u: [0, -1],
@@ -21,19 +22,14 @@ const directionFrom = {
 
 function setDirection(el) {
   const currData = el.dataset;
-  const currDirection = currData.direction ? currData.direction : false;
+  const currDirection = currData.direction;
   currData.direction = '';
 
   const currSpecial = currData.special;
-  if (currSpecial === 'line') {
-    return currDirection;
-  }
+  if (currSpecial === 'line') return currDirection;
 
   const currRoutes = JSON.parse(currData.routes);
-  if (currSpecial === 'start') {
-    return currRoutes[0];
-  }
-
+  if (currSpecial === 'start' && currDirection) return false;
 
   const possibleRoutes = currRoutes
   .filter(x => x !== directionFrom[currDirection]);
@@ -51,7 +47,6 @@ function nextPoint(currEl) {
   const currCoords = currEl.dataset.coords.split(',');
   const offset = directionTo[newDirection];
   const newCoords = addArr(currCoords, offset).join(',');
-  // const newEl = pointsAll.find(point => point.dataset.coords === newCoords);
   const newEl = cacheGet(newCoords);
 
   newEl.dataset.direction = newDirection;
@@ -62,13 +57,16 @@ function nextPoint(currEl) {
 function activatePoint(el) {
   const nextEl = nextPoint(el);
   if (!nextEl) {
+    pointsActive = Math.max(pointsActive - 1, 0);
     return false;
   }
 
   el.classList.add('glow');
 
-  setTimeout(() => activatePoint(nextEl), opts.runSpeed);
-  setTimeout(() => el.classList.remove('glow'), opts.spawnSpeed);
+  setTimeout(() => {
+    activatePoint(nextEl);
+    el.classList.remove('glow');
+  }, opts.runSpeed);
 
   return true;
 }
@@ -77,10 +75,14 @@ export default function activatePoints() {
   const pointsStarts = pointsAll.filter(point => point.dataset.special === 'start');
   const pointsStartCount = pointsStarts.length;
 
+
   return setInterval(() => {
   // return setTimeout(() => {
-    const rng = getRandom(pointsStartCount);
+    if (pointsActive < opts.limit) {
+      const rng = getRandom(pointsStartCount);
 
-    if (pointsStarts) activatePoint(pointsStarts[rng], false);
+      if (pointsStarts) activatePoint(pointsStarts[rng], false);
+      pointsActive += 1;
+    }
   }, opts.spawnSpeed);
 }

@@ -5,8 +5,8 @@ import opts from './config';
 const doc = document;
 const container = doc.querySelector(opts.selector);
 const containerSize = container.getBBox();
-const gridCountX = containerSize.width / opts.rectSize;
-const gridCountY = containerSize.height / opts.rectSize;
+const gridCountX = Math.ceil(containerSize.width / opts.rectSize);
+const gridCountY = Math.ceil(containerSize.height / opts.rectSize);
 
 const presetRect = setAttrs(doc.createElementNS('http://www.w3.org/2000/svg', 'rect'), {
   height: opts.rectSize - 1,

@@ -26,16 +26,17 @@
   }
 
   .grid-rect {
-    fill: #fff;
+    fill: #5563bd;
     opacity: 0;
   }
 
   .grid-rect:not(.glow) {
-    transition: opacity .5s linear;
+    transition: opacity 1s linear 1s;
   }
 
   .grid-rect.glow {
     opacity: 1;
+    transition: opacity .1s
   }
 
   [data-grid-pos="start"] {
@@ -51,7 +52,7 @@
 <body>
 
 <div class="container" >
-  <svg class="demo-box"  viewbox="0 0 300 300" height="100%" width="100%" preserveAspectRatio="xMidYMid" data-gridme >
+  <svg class="demo-box"  viewbox="0 0 300 300" height="100%" width="100%" preserveAspectRatio="xMidYMid slice" data-gridme >
     <rect height="100%" width="100%" fill="#303F9F" />
   </svg>
 </div>
