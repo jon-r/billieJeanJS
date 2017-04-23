@@ -1,4 +1,4 @@
-import { setAttrs, isFactorOf } from './utils';
+import { setAttrs, isFactor, isFactorFilter } from './utils';
 import opts from './config';
 
 const doc = document;
@@ -10,32 +10,33 @@ const gridCountY = containerSize.height / opts.rectSize;
 const presetRect = setAttrs(doc.createElementNS('http://www.w3.org/2000/svg', 'rect'), {
   height: opts.rectSize - 1,
   width: opts.rectSize - 1,
-  fill: '#fff', // TEMP?
-  opacity: '0.1', // TEMP?
+  class: 'grid-rect',
 });
 
-function setGridPos(coords) {
-  // let gridPos = '';
-  if (coords.some(n => n === 0 || n === gridCountX - 1)) {
-    return 'start';
-  }
-  if (coords.every(isFactorOf, opts.gridLines)) {
-    return 'join';
-  }
-  if (isFactorOf(coords[0], opts.gridlines)) {
-    return 'horiz';
-  }
-  return 'vert';
+function setGridRoutes(coords) {
+  const x = coords[0];
+  const y = coords[1];
+  const grid = opts.gridLines;
+
+  const isHoriz = isFactor(y, grid);
+  const isVert = isFactor(x, grid);
+
+  const out = [];
+
+  if (isVert && y > 0) out.push('u');
+  if (isVert && y < gridCountY - 1) out.push('d');
+  if (isHoriz && x > 0) out.push('l');
+  if (isHoriz && x < gridCountX - 1) out.push('r');
+
+  return JSON.stringify(out);
 }
 
 function getRect(arr) {
-  const x = arr[0];
-  const y = arr[1];
-
   return setAttrs(presetRect.cloneNode(), {
-    x: x * opts.rectSize,
-    y: y * opts.rectSize,
-    'data-grid-pos': setGridPos(arr),
+    x: arr[0] * opts.rectSize,
+    y: arr[1] * opts.rectSize,
+    'data-routes': setGridRoutes(arr),
+    'data-coords': JSON.stringify(arr),
   });
 }
 
@@ -49,7 +50,7 @@ export default function buildGrid() {
     gridY.forEach((__, y) => {
       const coords = [x, y];
 
-      if (coords.some(isFactorOf, opts.gridLines)) {
+      if (coords.some(isFactorFilter, opts.gridLines)) {
         const rect = getRect(coords);
         container.appendChild(rect);
         points.push(rect);

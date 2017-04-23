@@ -4,10 +4,24 @@ export function setAttrs(el, attrs) {
   return el;
 }
 
-export function isFactorOf(i) {
-  return i % this === 0 && i > 0;
+export function isFactor(i, n) {
+  return i % n === 0 && i > 0;
+}
+
+export function isFactorFilter(i) {
+  return isFactor(i, this);
 }
 
 export function getRandom(range) {
   return Math.floor(Math.random() * range);
+}
+
+export function randomFrom(arr) {
+  const rng = getRandom(arr.length);
+
+  return arr[rng];
+}
+
+export function addArr(arr1, arr2) {
+  return arr1.map((n, i) => n + arr2[i]);
 }

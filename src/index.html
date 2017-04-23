@@ -25,16 +25,25 @@
     width:100%;
   }
 
+  .grid-rect {
+    fill: #fff;
+    opacity: 0;
+  }
+
+  .grid-rect:not(.glow) {
+    transition: opacity .5s linear;
+  }
+
+  .grid-rect.glow {
+    opacity: 1;
+  }
+
   [data-grid-pos="start"] {
     fill: orange;
   }
 
   [data-grid-pos="join"] {
     fill: red;
-  }
-
-  .glow {
-    opacity: 1;
   }
 
 </style>
@@ -54,7 +63,7 @@
   <script type="text/javascript" src="danceTiles.js"></script>
 -->
 
-  <script src="/assets/bundle.js"></script>
+  <script src="../dist/bundle.js"></script>
 
 
 </body>

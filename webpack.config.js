@@ -4,7 +4,6 @@ const config = {
   context: __dirname + '/src', // `__dirname` is root of project and `src` is source
   entry: {
     app: './index.js',
-    tools: './tools.js',
   },
   output: {
     path: __dirname + '/dist', // `dist` is the destination
@@ -39,7 +38,8 @@ const config = {
     contentBase: __dirname + '/src',
   },
 
-  devtool: "eval-source-map" // Default development sourcemap
+  // devtool: "eval-source-map" // Default development sourcemap
+  devtool: "source-map"
 };
 
 // Check if build is running in production mode, then change the sourcemap type
