@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/.bin/webpack-dev-server --config webpack.config.js",
-    "build": "set NODE_ENV=production ./node_modules/.bin/webpack -p --config webpack.config.js"
+    "build": "NODE_ENV=production ./node_modules/.bin/webpack -p --config webpack.config.js",
+    "build-win": "set NODE_ENV=production&&bash ./node_modules/.bin/webpack -p --config webpack.config.js"
   },
   "repository": {
     "type": "git",

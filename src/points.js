@@ -32,7 +32,8 @@ function setDirection(el) {
   if (currSpecial === 'start' && currDirection) return false;
 
   const possibleRoutes = currRoutes
-  .filter(x => x !== directionFrom[currDirection]);
+  // .filter(x => x !== directionFrom[currDirection]);
+  .map(x => x === directionFrom[currDirection] ? currDirection : x);
 
   return randomFrom(possibleRoutes);
 }

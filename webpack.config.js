@@ -1,23 +1,23 @@
-const webpack = require('webpack');
+var webpack = require('webpack');
 
-const config = {
-  context: __dirname + '/src', // `__dirname` is root of project and `src` is source
+var config = {
+  context: __dirname +'/src', // `__dirname` is root of project and `src` is source
   entry: {
     app: './index.js',
   },
   output: {
-    path: __dirname + '/dist', // `dist` is the destination
+    path: __dirname +'/dist', // `dist` is the destination
     filename: 'bundle.js',
-    publicPath: "/dist",
+    publicPath: '/dist',
   },
   module: {
     rules: [
       {
-        test: /\.js$/, //Check for all js files
+        test: /\.js$/, // Check for all js files
         use: [{
           loader: 'babel-loader',
-          options: { presets: ['es2015'] }
-        }]
+          options: { presets: ['es2015'] },
+        }],
       },
 //      {
 //        test: /\.(sass|scss)$/, //Check for sass or scss file names
@@ -29,22 +29,22 @@ const config = {
 //      },
       {
         test: /\.json$/,
-        loader: "json-loader"  //JSON loader
-      }
-    ]
+        loader: 'json-loader', // JSON loader
+      },
+    ],
   },
-  //To run development server
+  // To run development server
   devServer: {
-    contentBase: __dirname + '/src',
+    contentBase: __dirname +'/src',
   },
 
-  // devtool: "eval-source-map" // Default development sourcemap
-  devtool: "source-map"
+  devtool: 'eval-source-map', // Default development sourcemap
+  // devtool: "source-map"
 };
 
 // Check if build is running in production mode, then change the sourcemap type
-if (process.env.NODE_ENV === "production") {
-  config.devtool = "source-map";
+if (process.env.NODE_ENV === 'production') {
+  config.devtool = 'source-map';
 
   // Can do more here
   // JSUglify plugin
