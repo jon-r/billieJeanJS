@@ -10,7 +10,6 @@
 </head>
 <style>
 
-
   .container {
     position: absolute;
     top: 0;
@@ -19,7 +18,7 @@
     right:0;
   }
 
-  .demo-box {
+  .grid-box {
     position: absolute;
     height: 100%;
     width:100%;
@@ -27,24 +26,17 @@
 
   .grid-rect {
     fill: #5563bd;
-    opacity: 0;
+    opacity: 0.1;
+    cursor: pointer;
   }
 
-  .grid-rect:not(.glow) {
+  .grid-rect:not(.glow), .grid-rect:not(:hover) {
     transition: opacity 1s linear 1s;
   }
 
-  .grid-rect.glow {
+  .grid-rect.glow, .grid-rect:hover {
     opacity: 1;
     transition: opacity .1s
-  }
-
-  [data-grid-pos="start"] {
-    fill: orange;
-  }
-
-  [data-grid-pos="join"] {
-    fill: red;
   }
 
 </style>
@@ -52,21 +44,13 @@
 <body>
 
 <div class="container" >
-  <svg class="demo-box"  viewbox="0 0 300 300" height="100%" width="100%" preserveAspectRatio="xMidYMid slice" data-gridme >
+  <svg id="js_gridBox" class="grid-box"  viewbox="0 0 300 300" height="100%" width="100%" preserveAspectRatio="xMidYMid slice" >
     <rect height="100%" width="100%" fill="#303F9F" />
   </svg>
 </div>
 
 
-
-<!--
-  <div id="billieJS" class="demo-box"></div>
-  <script type="text/javascript" src="danceTiles.js"></script>
--->
-
-  <!-- <script src="dist/bundle.js"></script> -->
   <script src="../dist/bundle.js"></script>
-
 
 </body>
 </html>

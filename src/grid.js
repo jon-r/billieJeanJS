@@ -2,18 +2,6 @@ import { setAttrs, isFactor, isFactorFilter } from './utils';
 import { cacheAdd } from './cache';
 import opts from './config';
 
-const doc = document;
-const container = doc.querySelector(opts.selector);
-const containerSize = container.getBBox();
-const gridCountX = Math.ceil(containerSize.width / opts.rectSize);
-const gridCountY = Math.ceil(containerSize.height / opts.rectSize);
-
-const presetRect = setAttrs(doc.createElementNS('http://www.w3.org/2000/svg', 'rect'), {
-  height: opts.rectSize - 1,
-  width: opts.rectSize - 1,
-  class: 'grid-rect',
-});
-
 function pointIs(filter, el) {
   const routes = JSON.parse(el.dataset.routes);
   const routeCount = routes.length;
@@ -27,7 +15,7 @@ function pointIs(filter, el) {
   return out[filter];
 }
 
-function setGridRoutes(coords) {
+function setGridRoutes(coords, gridCount) {
   const x = coords[0];
   const y = coords[1];
   const grid = opts.gridLines;
@@ -38,9 +26,9 @@ function setGridRoutes(coords) {
   const out = [];
 
   if (isVert && y > 0) out.push('u');
-  if (isVert && y < gridCountY - 1) out.push('d');
+  if (isVert && y < gridCount.height - 1) out.push('d');
   if (isHoriz && x > 0) out.push('l');
-  if (isHoriz && x < gridCountX - 1) out.push('r');
+  if (isHoriz && x < gridCount.width - 1) out.push('r');
 
   // TODO: add 'specials' (eg linear, start to filter in advance);
 
@@ -57,18 +45,35 @@ function setSpecial(rect) {
   return false;
 }
 
-function getRect(arr) {
+function getRect(arr, gridCount) {
+  const presetRect = setAttrs(document.createElementNS('http://www.w3.org/2000/svg', 'rect'), {
+    height: opts.rectSize - 1,
+    width: opts.rectSize - 1,
+    class: 'grid-rect',
+  });
+
+
   return setAttrs(presetRect.cloneNode(), {
     x: arr[0] * opts.rectSize,
     y: arr[1] * opts.rectSize,
-    'data-routes': setGridRoutes(arr),
+    'data-routes': setGridRoutes(arr, gridCount),
     'data-coords': arr.join(','),
   });
 }
 
-export default function buildGrid() {
-  const gridX = new Array(gridCountX).fill();
-  const gridY = new Array(gridCountY).fill();
+export default function buildGrid(targetEl) {
+  const container = document.querySelector(targetEl);
+  const containerSize = container.getBBox();
+
+  console.log(containerSize);
+
+  const gridCount = {
+    width: Math.ceil(containerSize.width / opts.rectSize),
+    height: Math.ceil(containerSize.height / opts.rectSize),
+  };
+
+  const gridX = new Array(gridCount.width).fill();
+  const gridY = new Array(gridCount.height).fill();
 
   const points = [];
 
@@ -77,7 +82,7 @@ export default function buildGrid() {
       const coords = [x, y];
 
       if (coords.some(isFactorFilter, opts.gridLines)) {
-        const rect = getRect(coords);
+        const rect = getRect(coords, gridCount);
         rect.dataset.special = setSpecial(rect);
         cacheAdd(coords.join(','), rect);
         container.appendChild(rect);

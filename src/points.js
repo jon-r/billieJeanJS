@@ -3,7 +3,7 @@ import { getRandom, randomFrom, addArr } from './utils';
 import buildGrid from './grid';
 import { cacheGet } from './cache';
 
-const pointsAll = Array.from(buildGrid());
+
 let pointsActive = 0;
 
 const directionTo = {
@@ -25,15 +25,21 @@ function setDirection(el) {
   const currDirection = currData.direction;
   currData.direction = '';
 
+
   const currSpecial = currData.special;
-  if (currSpecial === 'line') return currDirection;
+  if (currDirection && currSpecial === 'line') return currDirection;
 
   const currRoutes = JSON.parse(currData.routes);
   if (currSpecial === 'start' && currDirection) return false;
 
   const possibleRoutes = currRoutes
   // .filter(x => x !== directionFrom[currDirection]);
-  .map(x => x === directionFrom[currDirection] ? currDirection : x);
+  .map((x) => {
+    if (x === directionFrom[currDirection]) {
+      return currDirection;
+    }
+    return x;
+  });
 
   return randomFrom(possibleRoutes);
 }
@@ -56,26 +62,42 @@ function nextPoint(currEl) {
 }
 
 function activatePoint(el) {
-  const nextEl = nextPoint(el);
-  if (!nextEl) {
-    pointsActive = Math.max(pointsActive - 1, 0);
+  requestAnimationFrame(() => {
+    const nextEl = nextPoint(el);
+
+    if (!nextEl) {
+      pointsActive = Math.max(pointsActive - 1, 0);
+      return false;
+    }
+
+    el.classList.add('glow');
+
+    setTimeout(() => {
+      activatePoint(nextEl);
+      el.classList.remove('glow');
+    }, opts.runSpeed);
+
+    return true;
+  });
+}
+
+function manualActivate(e) {
+  const target = e.target;
+
+  if (!target.dataset.routes) {
     return false;
   }
 
-  el.classList.add('glow');
-
-  setTimeout(() => {
-    activatePoint(nextEl);
-    el.classList.remove('glow');
-  }, opts.runSpeed);
-
+  activatePoint(target);
   return true;
 }
 
-export default function activatePoints() {
+export default function activatePoints(targetEl) {
+  const pointsAll = Array.from(buildGrid(targetEl));
   const pointsStarts = pointsAll.filter(point => point.dataset.special === 'start');
   const pointsStartCount = pointsStarts.length;
 
+  pointsAll[0].parentElement.addEventListener('click', manualActivate, true);
 
   return setInterval(() => {
   // return setTimeout(() => {
