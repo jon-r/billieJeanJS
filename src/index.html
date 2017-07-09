@@ -12,10 +12,10 @@
 
   .container {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right:0;
+    top: 20px;
+    bottom: 20px;
+    left: 20px;
+    right:20px;
   }
 
   .grid-box {
@@ -28,25 +28,30 @@
     fill: #5563bd;
     opacity: 0.1;
     cursor: pointer;
-  }
-
-  .grid-rect:not(.glow), .grid-rect:not(:hover) {
+    will-change: opacity;
+    transform: translateZ(0);
     transition: opacity 1s linear 1s;
   }
 
   .grid-rect.glow, .grid-rect:hover {
     opacity: 1;
-    transition: opacity .1s
+    transition: none;
   }
 
 </style>
 
 <body>
 
+  <button id="pauseBtn" >PAUSE</button>
+  <button id="startBtn"  >START</button>
+
+
 <div class="container" >
   <svg id="js_gridBox" class="grid-box"  viewbox="0 0 300 300" height="100%" width="100%" preserveAspectRatio="xMidYMid slice" >
     <rect height="100%" width="100%" fill="#303F9F" />
   </svg>
+
+
 </div>
 
 
