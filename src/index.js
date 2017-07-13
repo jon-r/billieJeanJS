@@ -14,7 +14,7 @@ export default class JRGrid {
     rectSize = 5, // including 1px pad
     spawnSpeed = 500, // time per dot spawn
     runSpeed = 60, // time per dot activate the next dot
-    limit = 20, // number of active lines
+    limit = 10, // number of active lines
   }) {
     this.config = {
       frame: document.querySelector(selector),
@@ -106,7 +106,6 @@ export default class JRGrid {
 
   checkFrameRate() {
     const rate = this.framerateTest;
-
     const start = Date.now();
 
     requestAnimationFrame(() => {
@@ -121,16 +120,10 @@ export default class JRGrid {
         rate.counter = 0;
         rate.sum = 0;
 
-        console.log(fps);
-
         if ((fps < 30) && (this.counter.max > 1)) {
           this.counter.max -= 1;
-
-          console.log('low frames, reducing snakes', this.counter.max);
         } else if ((fps > 45) && (this.counter.max < this.config.limit)) {
           this.counter.max += 1;
-
-          console.log('high frames, more snakes', this.counter.max);
         }
       }
       this.checkFrameRate();
