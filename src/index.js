@@ -5,6 +5,7 @@ import buildGrid from './grid';
 //   activatePoints('#js_gridBox');
 // }
 
+import CanvasGrid from './canvas/canvasGrid';
 
 export default class JRGrid {
 
@@ -143,6 +144,13 @@ export default class JRGrid {
   }
 }
 
-const grid = new JRGrid({});
+// const grid = new JRGrid({});
+//
+// window.addEventListener('load', grid.begin());
 
-window.addEventListener('load', grid.begin());
+const grid = new CanvasGrid({ target: 'jrGrid' });
+
+window.addEventListener('load', () => {
+  grid.build().play();
+});
+
