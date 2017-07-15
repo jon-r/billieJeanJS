@@ -1,3 +1,5 @@
+import { debounce } from 'lodash';
+
 import GridRect from './rect';
 
 import { isFactorFilter, randomFrom } from '../utils';
@@ -5,10 +7,10 @@ import { isFactorFilter, randomFrom } from '../utils';
 export default class CanvasGrid {
   constructor({
     target = 'jsGridCanvas',
-    rectHeight = 8,
-    rectWidth = 8,
+    rectHeight = 6,
+    rectWidth = 6,
     color = '#fff',
-    gridSpacing = 16,
+    gridSpacing = 12,
     limit = 5,
   }) {
     this.target = document.getElementById(target);
@@ -23,33 +25,34 @@ export default class CanvasGrid {
       limit,
     };
 
-    this.count = 0;
     this.grid = new Map();
-    this.startCap = 0;
-    this.activePoints = [];
+    this.counter = 0;
 
+    this.activePoints = [];
     this.gridStarters = [];
-    this.ticker = null;
 
     this.isPaused = false;
-    this.container = this.updateContainer();
+
+    window.addEventListener('resize', debounce(() => this.build(), 500));
   }
 
-  updateContainer() {
+  getContainer() {
     const target = this.target;
     const cfg = this.config;
 
     target.height = target.parentElement.offsetHeight;
     target.width = target.parentElement.offsetWidth;
 
+    // this.grid.forEach(rect => rect.rect.drawRect(0.05));
+
     return {
-      rows: Math.floor(target.height / cfg.rectHeight),
-      cols: Math.floor(target.width / cfg.rectWidth),
+      rows: Math.ceil(target.height / cfg.rectHeight),
+      cols: Math.ceil(target.width / cfg.rectWidth),
     };
   }
 
   build() {
-    const container = this.container;
+    const container = this.getContainer();
     const cfg = this.config;
 
     const rows = new Array(container.rows).fill();
@@ -68,13 +71,12 @@ export default class CanvasGrid {
     });
 
     grid.forEach((rect) => {
-      rect.setCanTrigger(grid, cfg, container);
+      rect.drawRect(0.1).setCanTrigger(grid, cfg, container);
       if (rect.canTrigger.length === 1) this.gridStarters.push(rect);
     });
 
     return this;
   }
-
 
   play() {
     this.isPaused = false;
@@ -87,11 +89,11 @@ export default class CanvasGrid {
 
     this.activePoints = this.activePoints.filter(rect => rect.isActive);
 
-    if (this.startCap < this.config.limit) {
+    if (this.counter < this.config.limit) {
       newRect.trigger();
 
       this.activePoints.push(newRect);
-      this.startCap += 1;
+      this.counter += 1;
     }
 
     if (!this.isPaused) {
@@ -99,8 +101,6 @@ export default class CanvasGrid {
     }
   }
 
-  // TODO: spead functions across frames.
-  // we now have 3 empty frames with every 4th doing all the work.
   updateGrid(n) {
     let m = n + 1 || 0;
 
@@ -118,7 +118,7 @@ export default class CanvasGrid {
           if (next) {
             active.push(next);
           } else {
-            this.startCap -= 1;
+            this.counter -= 1;
           }
         }
       });

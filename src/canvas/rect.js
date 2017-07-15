@@ -1,6 +1,3 @@
-// TODO - recode have rectangles provide whats being changed info to the parent grid.
-// only one request animation to do the whole render??
-
 import { isFactor, biasedRNG } from '../utils';
 
 
@@ -21,7 +18,7 @@ export default class GridRect {
 
     this.color = cfg.color;
 
-    this.alpha = 0;
+    this.alpha = 0.1;
     this.isNew = false;
     this.isActive = false;
 
@@ -29,18 +26,22 @@ export default class GridRect {
     this.canTrigger = [];
   }
 
-  draw() {
+  drawRect(alpha) {
     const ctx = this.ctx;
-    const alpha = Math.max(this.alpha - 0.02, 0);
-
+    // TODO future - make this variable. for now static to match the portfolio
+    const color = `rgba(13,78,72,${alpha})`;
     ctx.clearRect(...this.dims);
+    ctx.fillStyle = color;
+    ctx.fillRect(...this.dims);
 
-    if (alpha > 0) {
-      const color = `rgba(255,255,255,${alpha})`;
+    return this;
+  }
 
-      ctx.fillStyle = color;
-      // ctx.globalAlpha = this.alpha;
-      ctx.fillRect(...this.dims);
+  draw() {
+    const alpha = Math.max(this.alpha - 0.02, 0.1);
+
+    if (alpha > 0.1) {
+      this.drawRect(alpha);
     } else {
       this.isActive = false;
     }
@@ -73,7 +74,7 @@ export default class GridRect {
 
   trigger(triggeredBy = false) {
     this.triggeredBy = triggeredBy;
-    this.alpha = 0.8;
+    this.alpha = 1;
     this.isNew = true;
     this.isActive = true;
   }
