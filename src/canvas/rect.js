@@ -1,7 +1,7 @@
 // TODO - recode have rectangles provide whats being changed info to the parent grid.
 // only one request animation to do the whole render??
 
-import { isFactor, randomFrom } from '../utils';
+import { isFactor, biasedRNG } from '../utils';
 
 
 export default class GridRect {
@@ -22,6 +22,8 @@ export default class GridRect {
     this.color = cfg.color;
 
     this.alpha = 0;
+    this.isNew = false;
+    this.isActive = false;
 
     this.triggeredBy = false;
     this.canTrigger = [];
@@ -29,14 +31,21 @@ export default class GridRect {
 
   draw() {
     const ctx = this.ctx;
+    const alpha = Math.max(this.alpha - 0.02, 0);
 
     ctx.clearRect(...this.dims);
 
-    ctx.fillStyle = this.color;
-    ctx.globalAlpha = this.alpha;
-    ctx.fillRect(...this.dims);
+    if (alpha > 0) {
+      const color = `rgba(255,255,255,${alpha})`;
 
-    this.alpha = Math.max(this.alpha - 0.05, 0);
+      ctx.fillStyle = color;
+      // ctx.globalAlpha = this.alpha;
+      ctx.fillRect(...this.dims);
+    } else {
+      this.isActive = false;
+    }
+
+    this.alpha = alpha;
     return this;
   }
 
@@ -49,9 +58,14 @@ export default class GridRect {
 
     const out = [];
 
+    // the order of these is important (goes clockwise);
+    // go up
     if (isVert && y > 0) out.push(grid.get(`${x},${y - 1}`));
-    if (isVert && y < container.rows - 1) out.push(grid.get(`${x},${y + 1}`));
+    // go left
     if (isHoriz && x > 0) out.push(grid.get(`${x - 1},${y}`));
+    // go down
+    if (isVert && y < container.rows - 1) out.push(grid.get(`${x},${y + 1}`));
+    // go right
     if (isHoriz && x < container.cols - 1) out.push(grid.get(`${x + 1},${y}`));
 
     this.canTrigger = out;
@@ -59,23 +73,34 @@ export default class GridRect {
 
   trigger(triggeredBy = false) {
     this.triggeredBy = triggeredBy;
-    this.alpha = 1;
+    this.alpha = 0.8;
+    this.isNew = true;
+    this.isActive = true;
   }
 
   getNext() {
-    const validTargets = this.canTrigger.filter(rect => rect.id !== this.triggeredBy);
+    this.isNew = false;
 
-    if (!validTargets.length) {
+    const validTargets = this.canTrigger.filter(rect => rect.id !== this.triggeredBy);
+    const possible = validTargets.length;
+    let newTarget;
+
+    switch (true) {
+    case (possible > 1):
+      // prioritise going straight ahead
+      // (array[1] is the middle and always opposite of three points)
+      newTarget = biasedRNG(validTargets, 1, 4);
+      break;
+    case (possible === 1):
+      newTarget = validTargets[0];
+      break;
+    default: // no possible targets
       return false;
     }
 
-    const newTarget = (validTargets.length > 2) ? randomFrom(validTargets) : validTargets[0];
+    if (newTarget.isActive) return false;
 
     newTarget.trigger(this.id);
-
     return newTarget;
   }
-
-
-
 }

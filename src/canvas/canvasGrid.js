@@ -5,19 +5,17 @@ import { isFactorFilter, randomFrom } from '../utils';
 export default class CanvasGrid {
   constructor({
     target = 'jsGridCanvas',
-    speed = 100,
-    rectHeight = 5,
-    rectWidth = 5,
+    rectHeight = 8,
+    rectWidth = 8,
     color = '#fff',
-    gridSpacing = 20,
-    limit = 10,
+    gridSpacing = 16,
+    limit = 5,
   }) {
     this.target = document.getElementById(target);
 
     this.ctx = this.target.getContext('2d');
 
     this.config = {
-      speed,
       rectHeight,
       rectWidth,
       color,
@@ -33,6 +31,7 @@ export default class CanvasGrid {
     this.gridStarters = [];
     this.ticker = null;
 
+    this.isPaused = false;
     this.container = this.updateContainer();
   }
 
@@ -76,56 +75,67 @@ export default class CanvasGrid {
     return this;
   }
 
-  // TODO: find and remove artifacts
-  updateGrid() {
-    const active = this.activePoints;
-    const activeClone = this.activePoints.slice(0);
-
-    activeClone.forEach((rect, i) => {
-
-      if (rect.alpha === 0) active.splice(i, 1);
-      if (rect.alpha === 1) {
-        const next = rect.getNext();
-
-//        console.log(next);
-
-        if (next) {
-          active.push(next);
-        } else {
-          this.startCap -= 1;
-        }
-      }
-
-      rect.draw();
-    });
-
-//    const test = this.grid.values.filter(rect => rect.alpha > 0);
-//    console.log(test.length);
-
-//    active.forEach(rect => rect.draw());
-  }
 
   play() {
-    const spawnSpeed = this.config.speed;
+    this.isPaused = false;
+    this.maintainPoints();
+    this.updateGrid();
+  }
 
-//    setTimeout(() => {
-    this.ticker = setInterval(() => {
-      const newRect = randomFrom(this.gridStarters);
+  maintainPoints() {
+    const newRect = randomFrom(this.gridStarters);
 
-      if (this.startCap < this.config.limit) {
-        newRect.trigger();
+    this.activePoints = this.activePoints.filter(rect => rect.isActive);
 
-        this.activePoints.push(newRect);
-        this.startCap += 1;
-      }
+    if (this.startCap < this.config.limit) {
+      newRect.trigger();
 
-      requestAnimationFrame(() => this.updateGrid());
-    }, spawnSpeed);
+      this.activePoints.push(newRect);
+      this.startCap += 1;
+    }
 
+    if (!this.isPaused) {
+      setTimeout(() => this.maintainPoints(), 1000);
+    }
+  }
 
+  // TODO: spead functions across frames.
+  // we now have 3 empty frames with every 4th doing all the work.
+  updateGrid(n) {
+    let m = n + 1 || 0;
+
+    const active = this.activePoints;
+
+    if (m === 3) {
+      m = 0;
+
+      active.forEach((rect) => {
+        rect.draw();
+
+        if (rect.isNew) {
+          const next = rect.getNext();
+
+          if (next) {
+            active.push(next);
+          } else {
+            this.startCap -= 1;
+          }
+        }
+      });
+    }
+
+    // if (m === 1) {
+    //   m = 1;
+    //
+    // }
+
+    if (!this.isPaused) {
+      requestAnimationFrame(() => this.updateGrid(m));
+    }
+    return true;
   }
 
   pause() {
-    clearInterval(this.ticker);
+    this.isPaused = true;
   }
 }
