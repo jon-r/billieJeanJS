@@ -31,9 +31,9 @@ export default class CanvasGrid {
     this.activePoints = [];
     this.gridStarters = [];
 
-    this.isPaused = false;
+    this.isPaused = true;
 
-    window.addEventListener('resize', debounce(() => this.build(), 500));
+    window.addEventListener('resize', debounce(() => this.build().play(), 500));
   }
 
   getContainer() {
@@ -42,8 +42,6 @@ export default class CanvasGrid {
 
     target.height = target.parentElement.offsetHeight;
     target.width = target.parentElement.offsetWidth;
-
-    // this.grid.forEach(rect => rect.rect.drawRect(0.05));
 
     return {
       rows: Math.ceil(target.height / cfg.rectHeight),
@@ -70,6 +68,9 @@ export default class CanvasGrid {
       });
     });
 
+    // ensures there are no 'starting' points when resizing
+    this.gridStarters = [];
+
     grid.forEach((rect) => {
       rect.drawRect(0.1).setCanTrigger(grid, cfg, container);
       if (rect.canTrigger.length === 1) this.gridStarters.push(rect);
@@ -78,12 +79,7 @@ export default class CanvasGrid {
     return this;
   }
 
-  play() {
-    this.isPaused = false;
-    this.maintainPoints();
-    this.updateGrid();
-  }
-
+  // clean up 'dead' points
   maintainPoints() {
     const newRect = randomFrom(this.gridStarters);
 
@@ -99,9 +95,13 @@ export default class CanvasGrid {
     if (!this.isPaused) {
       setTimeout(() => this.maintainPoints(), 1000);
     }
+    return this;
   }
 
   updateGrid(n) {
+    // m/n used to trigger background every 4th frame.
+    // slowing the 'snakes' and reducing CPU
+
     let m = n + 1 || 0;
 
     const active = this.activePoints;
@@ -124,15 +124,19 @@ export default class CanvasGrid {
       });
     }
 
-    // if (m === 1) {
-    //   m = 1;
-    //
-    // }
-
     if (!this.isPaused) {
       requestAnimationFrame(() => this.updateGrid(m));
     }
     return true;
+  }
+
+  play() {
+    if (!this.isPaused) return false;
+
+    this.isPaused = false;
+    this.maintainPoints().updateGrid();
+
+    return this;
   }
 
   pause() {

@@ -59,14 +59,14 @@ export default class GridRect {
 
     const out = [];
 
-    // the order of these is important (goes clockwise);
-    // go up
+    // the order of these is important (goes clockwise, css shorthand style);
+    // can go up
     if (isVert && y > 0) out.push(grid.get(`${x},${y - 1}`));
-    // go left
+    // can go left
     if (isHoriz && x > 0) out.push(grid.get(`${x - 1},${y}`));
-    // go down
+    // can go down
     if (isVert && y < container.rows - 1) out.push(grid.get(`${x},${y + 1}`));
-    // go right
+    // can go right
     if (isHoriz && x < container.cols - 1) out.push(grid.get(`${x + 1},${y}`));
 
     this.canTrigger = out;
@@ -88,8 +88,8 @@ export default class GridRect {
 
     switch (true) {
     case (possible > 1):
-      // prioritise going straight ahead
-      // (array[1] is the middle and always opposite of three points)
+      // prioritise going straight ahead.
+      // (array[1] is the always opposite of three points)
       newTarget = biasedRNG(validTargets, 1, 4);
       break;
     case (possible === 1):

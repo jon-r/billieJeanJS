@@ -1,4 +1,4 @@
-import { randomFrom, addArr } from './utils';
+import { randomFrom, addArr } from '../utils';
 
 import { cacheGet } from './cache';
 

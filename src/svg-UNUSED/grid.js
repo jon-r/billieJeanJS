@@ -1,4 +1,4 @@
-import { setAttrs, isFactor, isFactorFilter } from './utils';
+import { setAttrs, isFactor, isFactorFilter } from '../utils';
 import { cacheAdd } from './cache';
 
 function setGridRoutes(coords, gridCount, grid) {
